@@ -23,3 +23,6 @@ def convert_sensitivity():
     except ValueError:
         result_label.config(text="Please enter a valid number for sensitivity.")
 
+# Arayüz
+root = tk.Tk()
+root.title("Game Sensitivity Converter")
