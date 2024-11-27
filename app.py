@@ -2,11 +2,23 @@ import tkinter as tk
 from tkinter import ttk
 
 # Oyunlar arasındaki dönüşüm oranları
-conversion_rates = {
-    ("CSGO", "Valorant"): 0.3145,  # Örnek oran
-    ("Valorant", "CSGO"): 3.1818, # Tersi dönüşüm
-    # Daha fazla oyun eklenebilir
-}
+def conversion_rates():
+    return {
+        "csgo_to_rainbow_six": 7.67 / 2,  
+        "csgo_to_apex": 2 / 2,          
+        "csgo_to_insurgency": 0.314 / 2,
+        "csgo_to_overwatch2": 6.667 / 2, 
+        "csgo_to_payday2": 2.933 / 2,    
+        "csgo_to_squad": 0.251 / 2,     
+        "csgo_to_titanfall2": 2 / 2,    
+        "csgo_to_escape_tarkov": 0.352 / 2,  
+        "csgo_to_dying_light2": 5.280 / 2,  
+        "csgo_to_battlefield1": 9.00 / 2,    
+        "csgo_to_battlefield_2042": 9.00 / 2, 
+        "csgo_to_battlefield4": 9.00 / 2,    
+        "csgo_to_battlefield3": 9.00 / 2,    
+    }
+
 
 def convert_sensitivity():
     try:
