@@ -18,11 +18,8 @@ conversion_rates = {
     ("CSGO", "Battlefield 3"): 9.00 / 2,
 }
 
-# List of all possible games
-all_games = ["CSGO", "Rainbow Six", "Apex", "Insurgency Sandstorm", 
-             "Overwatch 2", "Payday 2", "Squad", "Titanfall 2", 
-             "Escape from Tarkov", "Dying Light 2", "Battlefield 1", 
-             "Battlefield 2042", "Battlefield 4", "Battlefield 3"]
+# List of all possible games involved in direct conversions
+all_games = list({game for pair in conversion_rates.keys() for game in pair})
 
 # Helper function to check if a conversion exists directly or indirectly
 def find_conversion_path(source, target):
