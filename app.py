@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-# Conversion rates between games based on sensitivity
+# Direct conversion rates between games
 conversion_rates = {
     ("CSGO", "Rainbow Six"): 7.67 / 2,
     ("CSGO", "Apex"): 2 / 2,
@@ -16,19 +16,6 @@ conversion_rates = {
     ("CSGO", "Battlefield 2042"): 9.00 / 2,
     ("CSGO", "Battlefield 4"): 9.00 / 2,
     ("CSGO", "Battlefield 3"): 9.00 / 2,
-    ("Rainbow Six", "CSGO"): 2 / 7.67,
-    ("Apex", "CSGO"): 2 / 2,
-    ("Insurgency Sandstorm", "CSGO"): 2 / 0.314,
-    ("Overwatch 2", "CSGO"): 2 / 6.667,
-    ("Payday 2", "CSGO"): 2 / 2.933,
-    ("Squad", "CSGO"): 2 / 0.251,
-    ("Titanfall 2", "CSGO"): 2 / 2,
-    ("Escape from Tarkov", "CSGO"): 2 / 0.352,
-    ("Dying Light 2", "CSGO"): 2 / 5.280,
-    ("Battlefield 1", "CSGO"): 2 / 9.00,
-    ("Battlefield 2042", "CSGO"): 2 / 9.00,
-    ("Battlefield 4", "CSGO"): 2 / 9.00,
-    ("Battlefield 3", "CSGO"): 2 / 9.00,
 }
 
 # List of all possible games
@@ -37,6 +24,21 @@ all_games = ["CSGO", "Rainbow Six", "Apex", "Insurgency Sandstorm",
              "Escape from Tarkov", "Dying Light 2", "Battlefield 1", 
              "Battlefield 2042", "Battlefield 4", "Battlefield 3"]
 
+# Helper function to check if a conversion exists directly or indirectly
+def find_conversion_path(source, target):
+    if (source, target) in conversion_rates:
+        return conversion_rates[(source, target)]
+    elif (target, source) in conversion_rates:
+        return 1 / conversion_rates[(target, source)]
+    else:
+        # Attempt to find an indirect path using CSGO as a common hub
+        for intermediate in all_games:
+            if (source, intermediate) in conversion_rates and (intermediate, target) in conversion_rates:
+                rate_to_intermediate = conversion_rates[(source, intermediate)]
+                rate_to_target = conversion_rates[(intermediate, target)]
+                return rate_to_intermediate * rate_to_target
+        return None  # No conversion path found
+
 def convert_sensitivity():
     try:
         # Retrieve selected games and sensitivity value
@@ -44,19 +46,13 @@ def convert_sensitivity():
         target_game = target_game_var.get()
         sensitivity = float(sensitivity_entry.get())
         
-        # Check if a conversion rate exists for the selected games in both directions
-        if (source_game, target_game) in conversion_rates:
-            conversion_rate = conversion_rates[(source_game, target_game)]
+        # Find conversion path
+        conversion_rate = find_conversion_path(source_game, target_game)
+        
+        if conversion_rate is not None:
             converted_sensitivity = sensitivity * conversion_rate
-            # Display the converted sensitivity value
-            result_label.config(text=f"Converted Sensitivity: {converted_sensitivity:.4f}")
-        elif (target_game, source_game) in conversion_rates:
-            conversion_rate = conversion_rates[(target_game, source_game)]
-            converted_sensitivity = sensitivity * conversion_rate
-            # Display the converted sensitivity value
             result_label.config(text=f"Converted Sensitivity: {converted_sensitivity:.4f}")
         else:
-            # Notify the user if conversion is not available
             result_label.config(text="Conversion not available for selected games.")
     except ValueError:
         # Handle invalid input for sensitivity
