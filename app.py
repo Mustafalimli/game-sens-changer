@@ -65,17 +65,17 @@ target_game_menu = ttk.OptionMenu(
 )
 target_game_menu.pack()
 
-# Hassasiyet giriş alanı
+# sens entry
 sensitivity_label = ttk.Label(root, text="Current Sensitivity:")
 sensitivity_label.pack()
 sensitivity_entry = ttk.Entry(root)
 sensitivity_entry.pack()
 
-# Dönüştürme düğmesi
+# convert button
 convert_button = ttk.Button(root, text="Convert", command=convert_sensitivity)
 convert_button.pack()
 
-# Sonuç etiketi
+# final results
 result_label = ttk.Label(root, text="")
 result_label.pack()
 
