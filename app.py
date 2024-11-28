@@ -18,100 +18,103 @@ conversion_rates = {
     ("CSGO", "Battlefield 3"): 9.00 / 2,
 }
 
-# List of all possible games involved in direct conversions
+# List of all games
 all_games = list({game for pair in conversion_rates.keys() for game in pair})
 
-# Helper function to check if a conversion exists directly or via CSGO
-def find_conversion_path(source, target):
+# Helper function to calculate conversion
+def convert_sensitivity(source, target, sensitivity):
     if source == target:
-        return 1.0
-
+        return sensitivity
     if (source, target) in conversion_rates:
-        return conversion_rates[(source, target)]
-    elif (target, source) in conversion_rates:
-        return 1 / conversion_rates[(target, source)]
-    else:
-        if (source, "CSGO") in conversion_rates and ("CSGO", target) in conversion_rates:
-            rate_to_csgo = conversion_rates[(source, "CSGO")]
-            rate_to_target = conversion_rates[("CSGO", target)]
-            return rate_to_csgo * rate_to_target
-        elif ("CSGO", source) in conversion_rates and ("CSGO", target) in conversion_rates:
-            rate_to_csgo = 1 / conversion_rates[("CSGO", source)]
-            rate_to_target = conversion_rates[("CSGO", target)]
-            return rate_to_csgo * rate_to_target
-
+        return sensitivity * conversion_rates[(source, target)]
+    if (target, source) in conversion_rates:
+        return sensitivity / conversion_rates[(target, source)]
     return None
 
-def convert_sensitivity():
+# Update sensitivities of all sliders
+def update_all_sensitivities(selected_game, sensitivity):
+    for game, widgets in sliders.items():
+        if game != selected_game:
+            converted_sensitivity = convert_sensitivity(selected_game, game, sensitivity)
+            if converted_sensitivity is not None:
+                sliders[game]["slider"].set(converted_sensitivity)
+                sliders[game]["entry"].delete(0, tk.END)
+                sliders[game]["entry"].insert(0, f"{converted_sensitivity:.2f}")
+
+# Update sensitivity based on slider
+def update_sensitivity_from_slider(game, value):
+    sensitivity = float(value)
+    sliders[game]["entry"].delete(0, tk.END)
+    sliders[game]["entry"].insert(0, f"{sensitivity:.2f}")
+    update_all_sensitivities(game, sensitivity)
+
+# Update sensitivity based on entry
+def update_sensitivity_from_entry(game):
     try:
-        source_game = source_game_var.get()
-        target_game = target_game_var.get()
-        sensitivity = float(sensitivity_entry.get())
-
-        conversion_rate = find_conversion_path(source_game, target_game)
-
-        if conversion_rate is not None:
-            converted_sensitivity = sensitivity * conversion_rate
-            result_label.config(text=f"Converted Sensitivity: {converted_sensitivity:.4f}")
-        else:
-            result_label.config(text="Conversion not available for selected games.")
+        sensitivity = float(sliders[game]["entry"].get())
+        sliders[game]["slider"].set(sensitivity)
+        update_all_sensitivities(game, sensitivity)
     except ValueError:
-        result_label.config(text="Please enter a valid number for sensitivity.")
+        pass
 
 # GUI setup
 root = tk.Tk()
 root.title("Game Sensitivity Converter")
-root.geometry("400x300")  # Set window size
-root.resizable(False, False)
+root.geometry("600x600")
 
-# Apply a modern theme
-style = ttk.Style(root)
-style.theme_use("clam")
+# Dropdown to select game
+selected_game_var = tk.StringVar()
+selected_game_var.set(all_games[0])
+tk.Label(root, text="Selected Game:").pack(pady=10)
+selected_game_menu = ttk.Combobox(root, textvariable=selected_game_var, values=all_games, state="readonly")
+selected_game_menu.pack()
 
-# Configure colors
-style.configure("TLabel", font=("Arial", 12))
-style.configure("TButton", font=("Arial", 10), background="#0078D7", foreground="white")
-style.configure("TCombobox", font=("Arial", 10))
+# Frame for sliders and entries
+slider_frame = tk.Frame(root)
+slider_frame.pack(pady=20)
 
-# Title
-title_label = ttk.Label(root, text="Game Sensitivity Converter", font=("Arial", 16, "bold"))
-title_label.pack(pady=10)
+sliders = {}
 
-# Source game dropdown
-source_frame = ttk.Frame(root)
-source_frame.pack(pady=5, padx=10, fill="x")
-source_game_label = ttk.Label(source_frame, text="Source Game:")
-source_game_label.pack(side="left", padx=5)
-source_game_var = tk.StringVar()
-source_game_dropdown = ttk.Combobox(source_frame, textvariable=source_game_var, state="readonly")
-source_game_dropdown['values'] = all_games
-source_game_dropdown.pack(side="right", fill="x", expand=True)
+# Create sliders and entries for all games
+for game in all_games:
+    frame = tk.Frame(slider_frame)
+    frame.pack(fill="x", pady=5)
 
-# Target game dropdown
-target_frame = ttk.Frame(root)
-target_frame.pack(pady=5, padx=10, fill="x")
-target_game_label = ttk.Label(target_frame, text="Target Game:")
-target_game_label.pack(side="left", padx=5)
-target_game_var = tk.StringVar()
-target_game_dropdown = ttk.Combobox(target_frame, textvariable=target_game_var, state="readonly")
-target_game_dropdown['values'] = all_games
-target_game_dropdown.pack(side="right", fill="x", expand=True)
+    tk.Label(frame, text=game, width=20, anchor="w").pack(side="left")
 
-# Sensitivity input
-sensitivity_frame = ttk.Frame(root)
-sensitivity_frame.pack(pady=5, padx=10, fill="x")
-sensitivity_label = ttk.Label(sensitivity_frame, text="Sensitivity:")
-sensitivity_label.pack(side="left", padx=5)
-sensitivity_entry = ttk.Entry(sensitivity_frame)
-sensitivity_entry.pack(side="right", fill="x", expand=True)
+    slider = tk.Scale(frame, from_=0.1, to=10, resolution=0.01, orient="horizontal", length=200)
+    slider.pack(side="left", padx=5)
 
-# Convert button
-convert_button = ttk.Button(root, text="Convert", command=convert_sensitivity)
-convert_button.pack(pady=10)
+    entry = tk.Entry(frame, width=10)
+    entry.pack(side="left", padx=5)
 
-# Result label
-result_label = ttk.Label(root, text="Converted Sensitivity will appear here.", anchor="center")
-result_label.pack(pady=10)
+    sliders[game] = {"slider": slider, "entry": entry}
 
-# Start the main loop
+    # Link slider and entry updates
+    slider.config(command=lambda value, g=game: update_sensitivity_from_slider(g, value))
+    entry.bind("<Return>", lambda event, g=game: update_sensitivity_from_entry(g))
+
+# Add a slider for the selected game to make adjustments easier
+selected_game_slider_frame = tk.Frame(root)
+selected_game_slider_frame.pack(pady=10)
+
+tk.Label(selected_game_slider_frame, text="Adjust Selected Game Sensitivity:").pack(side="left")
+
+selected_game_slider = tk.Scale(selected_game_slider_frame, from_=0.1, to=10, resolution=0.01, orient="horizontal", length=200)
+selected_game_slider.pack(side="left", padx=5)
+
+selected_game_slider.config(command=lambda value: update_sensitivity_from_slider(selected_game_var.get(), value))
+
+# Bind selected game change to update its slider and other game sliders
+def on_game_selected(event):
+    selected_game = selected_game_var.get()
+    current_sensitivity = sliders[selected_game]["slider"].get()
+    selected_game_slider.set(current_sensitivity)
+    update_all_sensitivities(selected_game, current_sensitivity)
+
+selected_game_menu.bind("<<ComboboxSelected>>", on_game_selected)
+
+# Initialize all sliders and entries
+update_all_sensitivities(selected_game_var.get(), 1.0)
+
 root.mainloop()
