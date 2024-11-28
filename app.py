@@ -21,20 +21,27 @@ conversion_rates = {
 # List of all possible games involved in direct conversions
 all_games = list({game for pair in conversion_rates.keys() for game in pair})
 
-# Helper function to check if a conversion exists directly or indirectly
+# Helper function to check if a conversion exists directly or via CSGO
 def find_conversion_path(source, target):
+    if source == target:
+        return 1.0  # No conversion needed for the same game
+
     if (source, target) in conversion_rates:
         return conversion_rates[(source, target)]
     elif (target, source) in conversion_rates:
         return 1 / conversion_rates[(target, source)]
     else:
-        # Attempt to find an indirect path using CSGO as a common hub
-        for intermediate in all_games:
-            if (source, intermediate) in conversion_rates and (intermediate, target) in conversion_rates:
-                rate_to_intermediate = conversion_rates[(source, intermediate)]
-                rate_to_target = conversion_rates[(intermediate, target)]
-                return rate_to_intermediate * rate_to_target
-        return None  # No conversion path found
+        # Attempt to use CSGO as an intermediate
+        if (source, "CSGO") in conversion_rates and ("CSGO", target) in conversion_rates:
+            rate_to_csgo = conversion_rates[(source, "CSGO")]
+            rate_to_target = conversion_rates[("CSGO", target)]
+            return rate_to_csgo * rate_to_target
+        elif ("CSGO", source) in conversion_rates and ("CSGO", target) in conversion_rates:
+            rate_to_csgo = 1 / conversion_rates[("CSGO", source)]
+            rate_to_target = conversion_rates[("CSGO", target)]
+            return rate_to_csgo * rate_to_target
+
+    return None  # No conversion path found
 
 def convert_sensitivity():
     try:
