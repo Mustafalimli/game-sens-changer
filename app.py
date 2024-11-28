@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
+# Conversion rates between games based on sensitivity
 conversion_rates = {
     ("CSGO", "Rainbow Six"): 7.67 / 2,
     ("CSGO", "Apex"): 2 / 2,
@@ -19,64 +20,53 @@ conversion_rates = {
 
 def convert_sensitivity():
     try:
+        # Retrieve selected games and sensitivity value
         source_game = source_game_var.get()
         target_game = target_game_var.get()
         sensitivity = float(sensitivity_entry.get())
         
+        # Check if a conversion rate exists for the selected games
         if (source_game, target_game) in conversion_rates:
             conversion_rate = conversion_rates[(source_game, target_game)]
             converted_sensitivity = sensitivity * conversion_rate
+            # Display the converted sensitivity value
             result_label.config(text=f"Converted Sensitivity: {converted_sensitivity:.4f}")
         else:
+            # Notify the user if conversion is not available
             result_label.config(text="Conversion not available for selected games.")
     except ValueError:
+        # Handle invalid input for sensitivity
         result_label.config(text="Please enter a valid number for sensitivity.")
 
-
+# GUI setup
 root = tk.Tk()
 root.title("Game Sensitivity Converter")
-#source game
-source_game_label = ttk.Label(root, text="Source Game:")
-source_game_label.pack()
-source_game_var = tk.StringVar(value="CSGO")
-source_game_menu = ttk.OptionMenu(root, source_game_var, "CSGO", "CSGO")
-source_game_menu.pack()
 
-# desired game
-target_game_label = ttk.Label(root, text="Target Game:")
-target_game_label.pack()
-target_game_var = tk.StringVar(value="Rainbow Six")
-target_game_menu = ttk.OptionMenu(
-    root, 
-    target_game_var, 
-    "Rainbow Six Siege", 
-    "Apex", 
-    "Insurgency Sandstorm", 
-    "Overwatch 2", 
-    "Payday 2", 
-    "Squad", 
-    "Titanfall 2", 
-    "Escape from Tarkov", 
-    "Dying Light 2", 
-    "Battlefield 1", 
-    "Battlefield 2042", 
-    "Battlefield 4", 
-    "Battlefield 3"
-)
-target_game_menu.pack()
+# Dropdown for source game selection
+tk.Label(root, text="Source Game:").grid(row=0, column=0, padx=10, pady=10)
+source_game_var = tk.StringVar()
+source_game_dropdown = ttk.Combobox(root, textvariable=source_game_var)
+source_game_dropdown['values'] = list(set([key[0] for key in conversion_rates.keys()]))
+source_game_dropdown.grid(row=0, column=1, padx=10, pady=10)
 
-# sens entry
-sensitivity_label = ttk.Label(root, text="Current Sensitivity:")
-sensitivity_label.pack()
-sensitivity_entry = ttk.Entry(root)
-sensitivity_entry.pack()
+# Dropdown for target game selection
+tk.Label(root, text="Target Game:").grid(row=1, column=0, padx=10, pady=10)
+target_game_var = tk.StringVar()
+target_game_dropdown = ttk.Combobox(root, textvariable=target_game_var)
+target_game_dropdown['values'] = list(set([key[1] for key in conversion_rates.keys()]))
+target_game_dropdown.grid(row=1, column=1, padx=10, pady=10)
 
-# convert button
-convert_button = ttk.Button(root, text="Convert", command=convert_sensitivity)
-convert_button.pack()
+# Input field for sensitivity value
+tk.Label(root, text="Sensitivity:").grid(row=2, column=0, padx=10, pady=10)
+sensitivity_entry = tk.Entry(root)
+sensitivity_entry.grid(row=2, column=1, padx=10, pady=10)
 
-# final results
-result_label = ttk.Label(root, text="")
-result_label.pack()
+# Button to trigger conversion
+convert_button = tk.Button(root, text="Convert", command=convert_sensitivity)
+convert_button.grid(row=3, column=0, columnspan=2, pady=10)
+
+# Label to display conversion results
+result_label = tk.Label(root, text="Converted Sensitivity will appear here.")
+result_label.grid(row=4, column=0, columnspan=2, pady=10)
 
 root.mainloop()
