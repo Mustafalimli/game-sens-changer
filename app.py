@@ -18,6 +18,12 @@ conversion_rates = {
     ("CSGO", "Battlefield 3"): 9.00 / 2,
 }
 
+# List of all possible games
+all_games = ["CSGO", "Rainbow Six", "Apex", "Insurgency Sandstorm", 
+             "Overwatch 2", "Payday 2", "Squad", "Titanfall 2", 
+             "Escape from Tarkov", "Dying Light 2", "Battlefield 1", 
+             "Battlefield 2042", "Battlefield 4", "Battlefield 3"]
+
 def convert_sensitivity():
     try:
         # Retrieve selected games and sensitivity value
@@ -46,14 +52,14 @@ root.title("Game Sensitivity Converter")
 tk.Label(root, text="Source Game:").grid(row=0, column=0, padx=10, pady=10)
 source_game_var = tk.StringVar()
 source_game_dropdown = ttk.Combobox(root, textvariable=source_game_var)
-source_game_dropdown['values'] = list(set([key[0] for key in conversion_rates.keys()]))
+source_game_dropdown['values'] = all_games
 source_game_dropdown.grid(row=0, column=1, padx=10, pady=10)
 
 # Dropdown for target game selection
 tk.Label(root, text="Target Game:").grid(row=1, column=0, padx=10, pady=10)
 target_game_var = tk.StringVar()
 target_game_dropdown = ttk.Combobox(root, textvariable=target_game_var)
-target_game_dropdown['values'] = list(set([key[1] for key in conversion_rates.keys()]))
+target_game_dropdown['values'] = all_games
 target_game_dropdown.grid(row=1, column=1, padx=10, pady=10)
 
 # Input field for sensitivity value
