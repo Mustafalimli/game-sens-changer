@@ -16,6 +16,19 @@ conversion_rates = {
     ("CSGO", "Battlefield 2042"): 9.00 / 2,
     ("CSGO", "Battlefield 4"): 9.00 / 2,
     ("CSGO", "Battlefield 3"): 9.00 / 2,
+    ("Rainbow Six", "CSGO"): 2 / 7.67,
+    ("Apex", "CSGO"): 2 / 2,
+    ("Insurgency Sandstorm", "CSGO"): 2 / 0.314,
+    ("Overwatch 2", "CSGO"): 2 / 6.667,
+    ("Payday 2", "CSGO"): 2 / 2.933,
+    ("Squad", "CSGO"): 2 / 0.251,
+    ("Titanfall 2", "CSGO"): 2 / 2,
+    ("Escape from Tarkov", "CSGO"): 2 / 0.352,
+    ("Dying Light 2", "CSGO"): 2 / 5.280,
+    ("Battlefield 1", "CSGO"): 2 / 9.00,
+    ("Battlefield 2042", "CSGO"): 2 / 9.00,
+    ("Battlefield 4", "CSGO"): 2 / 9.00,
+    ("Battlefield 3", "CSGO"): 2 / 9.00,
 }
 
 # List of all possible games
@@ -31,9 +44,14 @@ def convert_sensitivity():
         target_game = target_game_var.get()
         sensitivity = float(sensitivity_entry.get())
         
-        # Check if a conversion rate exists for the selected games
+        # Check if a conversion rate exists for the selected games in both directions
         if (source_game, target_game) in conversion_rates:
             conversion_rate = conversion_rates[(source_game, target_game)]
+            converted_sensitivity = sensitivity * conversion_rate
+            # Display the converted sensitivity value
+            result_label.config(text=f"Converted Sensitivity: {converted_sensitivity:.4f}")
+        elif (target_game, source_game) in conversion_rates:
+            conversion_rate = conversion_rates[(target_game, source_game)]
             converted_sensitivity = sensitivity * conversion_rate
             # Display the converted sensitivity value
             result_label.config(text=f"Converted Sensitivity: {converted_sensitivity:.4f}")
