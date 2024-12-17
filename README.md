@@ -4,4 +4,4 @@ Bu projede, farklı FPS oyunlarındaki hassasiyet ayarlarını birbirine dönü�
 
 ----------------------EN----------------------
 
-I created this tool to convert sensitivity settings between different FPS games. It’s designed for players like me who want to keep the same feel when switching between games. With a simple interface, you just select your game, input your current sensitivity, and get the equivalent sensitivity for other games."# game-sens-changer" 
+I created this tool to convert sensitivity settings between different FPS games. It’s designed for players like me who want to keep the same feel when switching between games. With a simple interface, you just select your game, input your current sensitivity, and get the equivalent sensitivity for other games."# game-sens-changer" .
