@@ -1,6 +1,6 @@
 ----------------------TR----------------------
 
-Bu projede, farklı FPS oyunlarındaki hassasiyet ayarlarını birbirine dönüştüren bir araç oluşturdum. Bu sayede oyunlar arasında geçiş yaparken aynı hissiyatı korumak isteyen oyuncular tek tıkla bunu halledebilecek. Kullanıcı dostu bir arayüzle, oynadığınız oyunu seçip hassasiyetinizi giriyorsunuz ve diğer oyunlardaki karşılık gelen hassasiyeti hesaplatabiliyorsunuz.
+Bu projede, farklı FPS oyunlarındaki hassasiyet ayarlarını birbirine dönüştüren bir araç oluşturdum. Bu sayede oyunlar arasında geçiş yaparken aynı hissiyatı korumak isteyen oyuncular tek tıkla bunu halledebilecek. Kullanıcı dostu bir arayüzle, oynadığınız oyunu seçip hassasiyetinizi giriyorsunuz ve diğer oyunlardaki karşılık gelen hassasiyeti hesaplatabiliyorsunuz
 
 ----------------------EN----------------------
 
